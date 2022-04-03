@@ -12,12 +12,13 @@ def compute_discriminator_loss(
 ):
     # TODO 1.3.1: Implement GAN loss for discriminator.
     # Do not use discrim_interp, interp, lamb. They are placeholders for Q1.5.
-    pass
-
+    # pass
+    loss = torch.mean(torch.log(discrim_real) + torch.log(1 - discrim_fake))
+    return -loss
 
 def compute_generator_loss(discrim_fake):
     # TODO 1.3.1: Implement GAN loss for generator.
-    pass
+    return torch.mean(torch.log(1 - discrim_fake))
 
 
 if __name__ == "__main__":
@@ -27,6 +28,7 @@ if __name__ == "__main__":
     os.makedirs(prefix, exist_ok=True)
 
     # TODO 1.3.2: Run this line of code.
+    # with torch.autograd.set_detect_anomaly(True):
     train_model(
         gen,
         disc,
@@ -35,5 +37,5 @@ if __name__ == "__main__":
         prefix=prefix,
         gen_loss_fn=compute_generator_loss,
         disc_loss_fn=compute_discriminator_loss,
-        log_period=1000,
+        log_period=500,
     )
