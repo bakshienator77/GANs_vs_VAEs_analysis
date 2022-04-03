@@ -107,7 +107,7 @@ def train_model(
                 # print("Real shit")
                 discrim_real = disc(train_batch)
                 # print("Fake shit")
-                discrim_fake = disc(gen(train_batch.shape[0]))
+                discrim_fake = disc(gen(train_batch.shape[0]).detach())
 
                 # TODO: 1.5 Compute the interpolated batch and run the discriminator on it.
                 # To compute interpolated data, draw eps ~ Uniform(0, 1)
