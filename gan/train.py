@@ -127,7 +127,7 @@ def train_model(
                 with torch.cuda.amp.autocast():
                     # TODO 1.2: Compute samples and evaluate under discriminator.
                     # discrim_fake = ...
-                    discrim_fake = disc(gen(train_batch.shape[0]))
+                    discrim_fake = disc(gen(train_batch.shape[0]).detach())
 
                     generator_loss = gen_loss_fn(discrim_fake)
                 optim_generator.zero_grad(set_to_none=True)

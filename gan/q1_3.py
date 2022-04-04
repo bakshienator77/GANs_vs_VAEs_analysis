@@ -19,7 +19,8 @@ def compute_discriminator_loss(
 
 def compute_generator_loss(discrim_fake):
     # TODO 1.3.1: Implement GAN loss for generator.
-    return torch.mean(torch.log(1 - discrim_fake))
+    # return torch.mean(torch.log(1 - discrim_fake))
+    return F.binary_cross_entropy_with_logits(discrim_fake, torch.ones_like(discrim_fake))
 
 
 if __name__ == "__main__":
