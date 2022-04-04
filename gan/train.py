@@ -118,6 +118,7 @@ def train_model(
                 discriminator_loss = disc_loss_fn(
                     discrim_real, discrim_fake, discrim_interp, interp, lamb
                 )
+                print(f"Iter: {iters}, Discrim Loss: {discriminator_loss.item()}")
             optim_discriminator.zero_grad(set_to_none=True)
             scaler.scale(discriminator_loss).backward()
             scaler.step(optim_discriminator)
@@ -134,6 +135,8 @@ def train_model(
                 scaler.scale(generator_loss).backward()
                 scaler.step(optim_generator)
                 scheduler_generator.step()
+                print(f"Iter: {iters}, Generator Loss: {generator_loss.item()}")
+
 
             if iters % log_period == 0 and iters != 0:
                 with torch.no_grad():
