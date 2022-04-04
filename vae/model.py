@@ -21,14 +21,26 @@ class Encoder(nn.Module):
                 (6): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
             )
         """
-        self.convs = ...
+        self.convs = nn.Sequential(
+                    nn.Conv2d( 3,  32, kernel_size=(3,3), padding=1),
+                    nn.ReLU(),
+                    nn.Conv2d(32,  64, kernel_size=(3,3), padding=1, stride=2),
+                    nn.ReLU(),
+                    nn.Conv2d(64, 128, kernel_size=(3,3), padding=1, stride=2),
+                    nn.ReLU(),
+                    nn.Conv2d(128, 256, kernel_size=(3,3), padding=1, stride=2),
+        )
         self.conv_out_dim = input_shape[1] // 8 * input_shape[2] // 8 * 256
 
         #TODO 2.1.1: fill in self.fc, such that output dimension is self.latent_dim
-        self.fc = ...
+        self.fc = nn.Linear(self.conv_out_dim, self.latent_dim)
 
     def forward(self, x):
         #TODO 2.1.1 : forward pass through the network, output should be of dimension : self.latent_dim
+        x = self.convs(x)
+        x = x.reshape(x.shape[0], -1)
+        x = self.fc(x)
+        return x
 
 
 class VAEEncoder(Encoder):
@@ -48,7 +60,9 @@ class Decoder(nn.Module):
         self.output_shape = output_shape
 
         #TODO 2.1.1: fill in self.base_size
-        self.base_size = ...
+        k=4, p =1, s=2
+        # H =(Hin−1)*s−2*p*(k−1)+1
+        self.base_size = (256, 6, 6)
         self.fc = nn.Linear(latent_dim, np.prod(self.base_size))
         
         """
@@ -64,11 +78,24 @@ class Decoder(nn.Module):
                 (7): Conv2d(32, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
             )
         """
-        self.deconvs = ...
+        self.deconvs = nn.Sequential(
+                    nn.ConvTranspose2d( 256, 128, kernel_size=(4,4), stride=2, padding=1),
+                    nn.ReLU(),
+                    nn.ConvTranspose2d( 128,  64, kernel_size=(4,4), padding=1, stride=2),
+                    nn.ReLU(),
+                    nn.ConvTranspose2d(  64,  32, kernel_size=(4,4), padding=1, stride=2),
+                    nn.ReLU(),
+                    nn.Conv2d(32, 3, kernel_size=(3,3), padding=1, stride=1),
+        )
 
     def forward(self, z):
         #TODO 2.1.1: forward pass through the network, first through self.fc, then self.deconvs.
-
+        x = self.fc(z)
+        x = x.reshape(-1, self.base_size[0], self.base_size[1], self.base_size[2])
+        x = self.deconvs(x)
+        print("Should be (3, 32, 32): ", x.shape)
+        return x
+        
 class AEModel(nn.Module):
     def __init__(self, variational, latent_size, input_shape = (3, 32, 32)):
         super().__init__()
