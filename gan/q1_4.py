@@ -14,7 +14,9 @@ def compute_discriminator_loss(
     # Do not use discrim_interp, interp, lamb. They are placeholders for Q1.5.
     # pass
     # loss = F.binary_cross_entropy_with_logits(discrim_real, torch.ones_like(discrim_real)) + F.binary_cross_entropy_with_logits(discrim_fake, torch.zeros_like(discrim_fake))
-    loss = 0.5 * torch.mean((F.sigmoid(discrim_real) - 1.0)**2 + F.sigmoid(discrim_fake)**2)
+    # loss = 0.5 * torch.mean((torch.sigmoid(discrim_real) - 1.0)**2) + 0.5*torch.mean(torch.sigmoid(discrim_fake)**2)
+    loss = 0.5 * F.mse_loss(torch.sigmoid(discrim_real), torch.ones_like(discrim_real)) + \
+           0.5 * F.mse_loss(torch.sigmoid(discrim_fake), torch.zeros_like(discrim_fake))
     return loss
 
 
@@ -22,7 +24,9 @@ def compute_discriminator_loss(
 def compute_generator_loss(discrim_fake):
     # TODO 1.4.1: Implement LSGAN loss for generator.
     # pass
-    loss = 0.5 * torch.mean((F.sigmoid(discrim_fake) - 1.0)**2)
+    # loss = 0.5 * torch.mean((torch.sigmoid(discrim_fake) - 1.0)**2)
+    loss = 0.5 * F.mse_loss(torch.sigmoid(discrim_fake), torch.ones_like(discrim_fake))
+
     return loss
 
 
