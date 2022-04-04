@@ -14,7 +14,7 @@ def compute_discriminator_loss(
     # Do not use discrim_interp, interp, lamb. They are placeholders for Q1.5.
     # pass
     # loss = torch.mean(torch.log(discrim_real) + torch.log(1 - discrim_fake))
-    loss = F.binary_cross_entropy(discrim_real, torch.ones_like(discrim_real)) + F.binary_cross_entropy(discrim_fake, torch.zeros_like(discrim_fake))
+    loss = F.binary_cross_entropy_with_logits(discrim_real, torch.ones_like(discrim_real)) + F.binary_cross_entropy_with_logits(discrim_fake, torch.zeros_like(discrim_fake))
     return loss
 
 def compute_generator_loss(discrim_fake):
