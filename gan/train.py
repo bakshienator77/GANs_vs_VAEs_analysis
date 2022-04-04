@@ -107,14 +107,20 @@ def train_model(
                 # print("Real shit")
                 discrim_real = disc(train_batch)
                 # print("Fake shit")
-                discrim_fake = disc(gen(train_batch.shape[0]))
+                fake_batch = gen(train_batch.shape[0])
+                discrim_fake = disc(fake_batch)
 
                 # TODO: 1.5 Compute the interpolated batch and run the discriminator on it.
                 # To compute interpolated data, draw eps ~ Uniform(0, 1)
                 # interpolated data = eps * fake_data + (1-eps) * real_data
-                interp = None
-                discrim_interp = None
-
+                eps = torch.rand(1).cuda()
+                # print("eps: ", eps)
+                interp = eps * fake_batch + (1-eps) * train_batch
+                # print("interp shape: ", interp.shape)
+                # print("train batch shape: ", train_batch.shape)
+                # print("fake batch shape: ", fake_batch.shape)
+                discrim_interp = disc(interp)
+                # print("discrim interp shape: ", discrim_interp.shape)
                 discriminator_loss = disc_loss_fn(
                     discrim_real, discrim_fake, discrim_interp, interp, lamb
                 )

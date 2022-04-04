@@ -1,6 +1,7 @@
 import torch
 from cleanfid import fid
 from matplotlib import pyplot as plt
+from torchvision.utils import save_image
 
 
 def save_plot(x, y, xlabel, ylabel, title, filename):
@@ -36,4 +37,15 @@ def interpolate_latent_space(gen, path):
     # Forward the samples through the generator.
     # Save out an image holding all 100 samples.
     # Use torchvision.utils.save_image to save out the visualization.
-    pass
+    # pass
+    with torch.cuda.amp.autocast():
+        z = torch.normal(torch.zeros((1, 126)), torch.ones((1, 126))).half().cuda().repeat((100,1))
+        two_dim = torch.cat([torch.meshgrid(torch.linspace(-1,1, 10), torch.linspace(-1,1, 10), indexing="xy")[0].reshape(-1,1), 
+                            torch.meshgrid(torch.linspace(-1,1, 10), torch.linspace(-1,1, 10), indexing="xy")[1].reshape(-1,1)], dim=1).reshape(-1,2).half().cuda()
+        z = torch.cat([two_dim, z], dim=1)
+        generated_samples = gen.forward_given_samples(z)
+        save_image(
+            generated_samples.data.float(),
+            path,
+            nrow=10,
+        )

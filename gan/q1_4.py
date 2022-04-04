@@ -5,6 +5,7 @@ import torch.nn.functional as F
 
 from networks import Discriminator, Generator
 from train import train_model
+from eval import eval_model
 
 
 def compute_discriminator_loss(
@@ -38,7 +39,17 @@ if __name__ == "__main__":
     os.makedirs(prefix, exist_ok=True)
 
     # TODO 1.4.2: Run this line of code.
-    train_model(
+    # train_model(
+    #     gen,
+    #     disc,
+    #     num_iterations=int(3e4),
+    #     batch_size=256,
+    #     prefix=prefix,
+    #     gen_loss_fn=compute_generator_loss,
+    #     disc_loss_fn=compute_discriminator_loss,
+    #     log_period=1000,
+    # )
+    eval_model(
         gen,
         disc,
         num_iterations=int(3e4),
@@ -46,5 +57,5 @@ if __name__ == "__main__":
         prefix=prefix,
         gen_loss_fn=compute_generator_loss,
         disc_loss_fn=compute_discriminator_loss,
-        log_period=1000,
+        log_period=14,
     )
