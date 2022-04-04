@@ -20,8 +20,8 @@ def build_transforms():
         transforms.ConvertImageDtype(torch.float),
         # transforms.Normalize(mean=[0.485*255, 0.456*255, 0.406*255],
         #                      std=[0.229*255, 0.224*255, 0.225*255]),])
-        transforms.Normalize(mean=[0.5*255, 0.5*255, 0.5*255],
-                             std=[0.5*255, 0.5*255, 0.5*255]),])
+        transforms.Normalize(mean=[0.5, 0.5, 0.5],
+                             std=[0.5, 0.5, 0.5]),])
     return ds_transforms
 
 
@@ -118,7 +118,7 @@ def train_model(
                 discriminator_loss = disc_loss_fn(
                     discrim_real, discrim_fake, discrim_interp, interp, lamb
                 )
-                print(f"Iter: {iters}, Discrim Loss: {discriminator_loss.item()}")
+                # print(f"Iter: {iters}, Discrim Loss: {discriminator_loss.item()}")
             optim_discriminator.zero_grad(set_to_none=True)
             scaler.scale(discriminator_loss).backward()
             scaler.step(optim_discriminator)
@@ -135,7 +135,7 @@ def train_model(
                 scaler.scale(generator_loss).backward()
                 scaler.step(optim_generator)
                 scheduler_generator.step()
-                print(f"Iter: {iters}, Generator Loss: {generator_loss.item()}")
+                # print(f"Iter: {iters}, Generator Loss: {generator_loss.item()}")
 
 
             if iters % log_period == 0 and iters != 0:
