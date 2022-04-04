@@ -81,7 +81,7 @@ def train_model(
         dataset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=4,
+        num_workers=12,
         pin_memory=True,
     )
 
