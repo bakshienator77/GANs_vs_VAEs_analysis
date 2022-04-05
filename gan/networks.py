@@ -29,7 +29,7 @@ class UpSampleConv2D(jit.ScriptModule):
         # Hint for 2. look at
         # https://pytorch.org/docs/master/generated/torch.nn.PixelShuffle.html#torch.nn.PixelShuffle
         # print(x.shape, "If this is B x C x H x W")
-        x = x.repeat([1, int(self.upscale_factor**2), 1, 1])
+        x = x.repeat_interleave(int(self.upscale_factor**2), dim=1)
         # print(x.shape, "Then this should be B x C * r^2 x H x W")
         x = self.rearrange(x)
         # print(x.shape, "Then this should be B x C x H*r x W*r")
