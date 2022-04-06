@@ -12,20 +12,37 @@ from matplotlib import pyplot as plt
 import time
 import os
 from utils import *
+from tqdm import tqdm
 
 def ae_loss(model, x):
     """ 
     TODO 2.1.2: fill in MSE loss between x and its reconstruction. 
     return loss, {recon_loss = loss} 
     """
-    
+    pred = model.decoder(model.encoder(x))
+    loss = F.mse_loss(pred, x, reduction="sum")
+    # print("manual mse: ", loss.item())
+    loss = loss/x.shape[0]
+    # print("manual mse: ", loss.item()/x.shape[0])
+    # loss = loss/np.prod(x.shape)
+    # print("manual mse: ", loss.item()/np.prod(x.shape))
+
+    # loss = F.mse_loss(pred, x, reduction="mean")
+    # print("the other mse: ", loss.item())
     return loss, OrderedDict(recon_loss=loss)
 
 def vae_loss(model, x, beta = 1):
     """TODO 2.2.2 : Fill in recon_loss and kl_loss. """
+    mu, log_sigma = model.encoder(x)
+    eps = torch.randn(mu.shape[0], mu.shape[1]).cuda()
+    sigma = torch.exp(log_sigma)
+    z = mu + sigma * eps
+    # print("latent z shape should be B x 1024: ", z.shape)
+    pred = model.decoder(z)
+    recon_loss = F.mse_loss(pred, x, reduction="sum")
+    recon_loss = recon_loss/x.shape[0]
 
-    recon_loss = ...
-    kl_loss = ...
+    kl_loss = 0.5 * torch.sum(mu*mu + sigma**2 - torch.log(sigma**2) - 1)/x.shape[0]
 
     total_loss = recon_loss + beta*kl_loss
     return total_loss, OrderedDict(recon_loss=recon_loss, kl_loss=kl_loss)
@@ -40,7 +57,7 @@ def linear_beta_scheduler(max_epochs=None, target_val = 1):
     """TODO 2.3.2 : Fill in helper. The value returned should increase linearly 
     from 0 at epoch 0 to target_val at epoch max_epochs """
     def _helper(epoch):
-       ...
+       return target_val*float(epoch)/max_epochs
     return _helper
 
 def run_train_epoch(model, loss_mode, train_loader, optimizer, beta = 1, grad_clip = 1):

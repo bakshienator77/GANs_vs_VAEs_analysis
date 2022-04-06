@@ -47,11 +47,19 @@ class VAEEncoder(Encoder):
     def __init__(self, input_shape, latent_dim):
         super().__init__(input_shape, latent_dim)
         #TODO 2.2.1: fill in self.fc, such that output dimension is 2*self.latent_dim
-        self.fc = ...
+        self.conv_out_dim = input_shape[1] // 8 * input_shape[2] // 8 * 256
+        self.fc = nn.Linear(self.conv_out_dim, 2*latent_dim)
+        self.latent_dim = latent_dim
     
     def forward(self, x):
         #TODO 2.2.1: forward pass through the network.
         # should return a tuple of 2 tensors, each of dimension self.latent_dim
+        # pass
+        x = self.convs(x)
+        x = x.reshape(x.shape[0], -1)
+        x = self.fc(x)
+        # print("SHould be Bx 2*1024: ", x.shape)
+        return (x[:,:self.latent_dim], x[:,self.latent_dim:])
 
 class Decoder(nn.Module):
     def __init__(self, latent_dim, output_shape):
@@ -59,10 +67,10 @@ class Decoder(nn.Module):
         self.latent_dim = latent_dim
         self.output_shape = output_shape
 
-        #TODO 2.1.1: fill in self.base_size
-        k=4, p =1, s=2
+        # TODO 2.1.1: fill in self.base_size
+        # k=4, p =1, s=2
         # H =(Hin−1)*s−2*p*(k−1)+1
-        self.base_size = (256, 6, 6)
+        self.base_size = (256, 4, 4)
         self.fc = nn.Linear(latent_dim, np.prod(self.base_size))
         
         """
@@ -93,9 +101,9 @@ class Decoder(nn.Module):
         x = self.fc(z)
         x = x.reshape(-1, self.base_size[0], self.base_size[1], self.base_size[2])
         x = self.deconvs(x)
-        print("Should be (3, 32, 32): ", x.shape)
+        # print("Should be (3, 32, 32): ", x.shape)
         return x
-        
+
 class AEModel(nn.Module):
     def __init__(self, variational, latent_size, input_shape = (3, 32, 32)):
         super().__init__()
