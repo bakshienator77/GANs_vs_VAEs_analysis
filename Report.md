@@ -1,120 +1,105 @@
-Collaborators: Anirudhha Ramesh, Akshunn Jindal
+## Generative Adversarial Networks
 
-## Task 1: Generative Adversarial Networks (60 points)
+### Simple GAN loss
 
-### Question 1.3: Implement GAN loss
+In this section, we test the performance of the original GAN losses for the generator and discriminator as described in Algorithm 1 of [1]((https://arxiv.org/pdf/1406.2661.pdf))
 
-**Q**{What is the final FID attained? Additionally, please plot the fid score with respect to training iterations and report the final score.}
 
 **Final FID attained is 146**. However as can be seen from the graph ahead the FID had gone < 60 around iterations 23k - 25k. This indicates some form of overfitting is happening. From the samples below we can see some form of mode collapse happening.
 
-![fid_vs_iterations.png](attachment:fid_vs_iterations.png)
+![fid_vs_iterations.png](gan/reruns/data_gan_rerun/fid_vs_iterations.png)
+
+### Samples At iteration 30k
+
+![samples_30000.png](gan/data_gan/samples_30000.png)
 
 
+### Samples At iteration 23k
 
-**Q**{How do the samples look? Please plot them here.}
-
-### At iteration 30k
-
-![samples_30000.png](attachment:samples_30000.png)
-
-
-### At iteration 23k
-
-![samples_23000.png](attachment:samples_23000.png)
+![samples_23000.png](gan/data_gan/samples_23000.png)
 
 As we can see the results at iteration 23k are better than those at 30k, however many of the generated images might look birdlike from a distance but upon zooming in they are unnatural.
 
-**Q**{How does the latent space interpolation look, is the latent space disentangled at all?}
+**Below I have plotted it interpolations at iteration 30k and at 23k and it is clear that the interpolations at 23k are better. The colours are more nature oriented as would be seen with birds and there is more variation by varying just the first two dimensions of the laten space. I would say that at 30k there is hardly any disentagling but at 23k there is slightly better disentangling**
 
-**Below I have plotted it interpolations at iteration 30k and at 23k and it is clear that the iterpolations at 23k are better. The colours are more nature oriented as would be seen with birds and there is more variation by varying just the first two dimensions of the laten space. I would say that at 30k there is hardly any disentagling but at 23k there is slightly better disentangling**
+### Interpolations At iteration 30k
 
-### At iteration 30k
+![interpolations_30000.png](gan/reruns/data_gan_rerun/interpolations_30000.png)
 
-![interpolations_30000.png](attachment:interpolations_30000.png)
+<!-- ### At iteration 30k but varying two latent dims from (-3,3) instead of (-1,1)
+![interpolations_14.png](gan/data_gan/interpolations_14.png) -->
 
-### At iteration 30k but varying two latent dims from (-3,3) instead of (-1,1)
+### Interpolations At iteration 23k
 
-### At iteration 23k
+![interpolations_23000.png](gan/reruns/data_gan_rerun/interpolations_23000.png)
 
-![interpolations_23000.png](attachment:interpolations_23000.png)
+**Discussion** Since the loss function is binary cross entropy, there is a sigmoid function coming into play here due to which the problem of vanishing gradients is a problem. While in this round of training I was lucky enough to witness a duration of stable training, the model eventually did run into vanishing gradients causing the training to worsen, it could've been the generator loss function that ran into the problem (poorer samples) or the discrimator part (poorer checks leading to poorer samples by the generator).
 
-**Q**{As you may have noticed, the FID jumps around a lot (can range from 100 to 150) and the final samples do not look very good. Please describe in your own words why you think this might be the case.}
-
-
-**A** Since the loss function is binary cross entropy, there is a sigmoid function coming into play here due to which the problem of vanishing gradients is a problem. While in this round of training I was lucky enough to witness a duration of stable training, the model eventually did run into vanishing gradients causing the training to worsen, it could've been the generator loss function that ran into the problem (poorer samples) or the discrimator part (poorer checks leading to poorer samples by the generator).
-
-## Question 1.4: Implement LSGAN loss
-
-**Q**{What is the final FID attained? Additionally, please plot the fid score with respect to training iterations and report the final score.}
+##  LSGAN loss
 
 **The final FID attained is  52.57**
 
-![fid_vs_iterations.png](attachment:fid_vs_iterations.png)
+![fid_vs_iterations.png](gan/reruns/data_ls_gan_rerun/fid_vs_iterations.png)
 
-The FID is much better than the 90 that was in the readme but the next version still outperforms this hence I think my result is fine. I also verified that my upsample and downsample were inversions of each other through unittesting so I'm confident the implementation was correct.
+The FID is much better than the simple GAN loss. I also verified that my upsample and downsample were inversions of each other through unittesting so I'm confident the implementation was correct.
 
-**Q**{How do the samples look? Please plot them here.}
+### Samples At iteration 30k
 
-### At iteration 30k
-
-![samples_30000.png](attachment:samples_30000.png)
+![samples_30000.png](gan/reruns/data_ls_gan_rerun/samples_30000.png)
 
 These are much better samples than were generated by the previous model at 30k iterations. But there are still some strange samples generated. The ones that do look like birds are more natural looking and believable.
 
-### at iteration 29k
+### Samples at iteration 29k
 
-![samples_29000.png](attachment:samples_29000.png)
+![samples_29000.png](gan/reruns/data_ls_gan_rerun/samples_29000.png)
 
-**Q**{How does the latent space interpolation look, is the latent space disentangled at all?}
-\A{}
-### At 30k iterations
+<!-- **Q**{How does the latent space interpolation look, is the latent space disentangled at all?}
+\A{} -->
+### Interpolations At 30k iterations
 
-![interpolations_30000.png](attachment:interpolations_30000.png)
+![interpolations_30000.png](gan/reruns/data_ls_gan_rerun/interpolations_30000.png)
 
-### At iteration 30k but varying two latent dims from (-3,3) instead of (-1,1)
+<!-- ### At iteration 30k but varying two latent dims from (-3,3) instead of (-1,1)
 
-![interpolations_14.png](attachment:interpolations_14.png)
+![interpolations_14.png](gan/data_ls_gan/interpolations_14.png) -->
 
 The latent space generated from (-1, 1) (first image) looks a little bird like but doesn't seem all that disentangled, that being said the choice to pick the first two hidden dimensions is arbitrary and unlike some other deterministic dimensionality rediction algorith like PCA it is not guaranteed that the first two dimensions will be the most meaningful.
 
-**Q**{If this section was implemented correctly, you should have a final FID in the ballpark of 90 and the samples should look reasonable at this point (you should see some birds but they might be imperfect). In your own words, describe why you think this version of the GAN loss was more stable than the original.}
-
-**A** This version of GAN loss was more stable because it used mse loss without any sigmoid activations leading to better gradients more consistently as the problem of vanishing gradients is avoided.
+**Discussion** This version of GAN loss was more stable because it used mse loss without any sigmoid activations leading to better gradients more consistently as the problem of vanishing gradients is avoided.
 
 
-## Question 1.5: Implement WGAN-GP loss}
+## WGAN-GP loss
 
-**Q**{What is the final FID attained? Additionally, please plot the fid score with respect to training iterations and report the final score.}
+Here I use the generator and discriminator losses from Algorithm 1 in WGAN-GP paper [3](https://arxiv.org/pdf/1704.00028.pdf).
 
 **The final FID obtained is 38.6.**
 
-![fid_vs_iterations.png](attachment:fid_vs_iterations.png)
+![fid_vs_iterations.png](gan/reruns/data_wgan_gp_rerun/fid_vs_iterations.png)
 
-\Q{How do the samples look? Please plot them here.}
-![samples_30000.png](attachment:samples_30000.png)
+### Samples At iteration 30k
 
-\Q{How does the latent space interpolation look, is the latent space disentangled at all?}
+![samples_30000.png](gan/reruns/data_wgan_gp_rerun/samples_30000.png)
 
-![interpolations_30000.png](attachment:interpolations_30000.png)
+### Interpolations At 30k iterations
+
+![interpolations_30000.png](gan/reruns/data_wgan_gp_rerun/interpolations_30000.png)
 
 ### At iteration 30k but varying two latent dims from (-3,3) instead of (-1,1)
 
-![interpolations_14.png](attachment:interpolations_14.png)
+![interpolations_14.png](gan/reruns/data_wgan_gp_rerun/interpolations_14.png)
 
 Here we got a little lucky! though the first two latent dimensions are being altered for both attempts, the rest of the randomly generated vector would not have been the same between the above two images, nevertheless the generation is certainly shows a birdlike - batlike variation while keeping the sky constant. This shows that this model is better at latent space disentanglement than the first two.
 
-**Q**{If this section was implemented correctly, you should have a final FID in the ballpark of 50 and the samples should look reasonable at this point (you should see some birds that look reasonable). In your own words, describe why you think this version of the GAN loss was so much more stable and performant than the previous two.}
 
-**A** The previous loss function overcame the problem of vanishing gradients by using MSE Loss however there are two issues still unaddressed:
+**Discussion** The previous loss function overcame the problem of vanishing gradients by using MSE Loss however there are two issues still unaddressed:
 - Mseloss can still have exploding gradients as gradients are unclipped leading to training instability
 - MSEloss never truly converges as the gradients vanish as they approach prediction approaches the true value (this is not a problem with BCE loss)
 
 Hence in the WGAN-GP loss we bring back the BCE loss as the GAN objective and additionally impose a loss on the norm of the gradient of the loss such that it is close to 1.0. From the graph of a sigmoid it is clear that sigmoid's behaviour can be linear near zero input and this is the region in which it is most beneficial to train a network which has sigmoids in it. Therefore this loss avoid the issue of both vanishing and exploding gradients to have the most stable training we have seen among the three losses.
 
-# Task 2: Variational Autoencoders (30 points)}
+# Variational Autoencoders
 
-## Question 2.1: AutoEncoder}
+## AutoEncoders
 
 \Q{Plot the reconstruction loss (for the valiation data) versus number of epochs trained on for all three latent size settings on the same plot.}
 
@@ -156,26 +141,26 @@ Hence in the WGAN-GP loss we bring back the BCE loss as the GAN objective and ad
 
 ### Recon Loss 
  Beta = 0.8 | Beta = 1.0 | Beta = 1.2
- - | - | -
+---|---|---|
 ![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/loss_curve.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/loss_curve.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/loss_curve.png)
 
 ![loss_curve_vae_final.png](attachment:loss_curve_vae_final.png)
 
 ### KL Loss 
  Beta = 0.8 | Beta = 1.0 | Beta = 1.2
- - | - | -
+ ---|---|---|
  ![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/loss_curve_kl.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/loss_curve_kl.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/loss_curve_kl.png)
 
 ![loss_curve_vae_final_kl.png](attachment:loss_curve_vae_final_kl.png)
 
 ### Samples 
  Beta = 0.8 | Beta = 1.0 | Beta = 1.2
- - | - | -
+ ---|---|---|
 ![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/epoch_19_samples.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/epoch_19_samples.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/epoch_19_samples.png)
 
 ### Reconstructions
  Beta = 0.8 | Beta = 1.0 | Beta = 1.2
- - | - | -
+ ---|---|---|
  ![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/epoch_19_recons.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/epoch_19_recons.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/epoch_19_recons.png)
 
 ### Beta = 0.8
@@ -222,6 +207,14 @@ Hence in the WGAN-GP loss we bring back the BCE loss as the GAN objective and ad
 
 
 
-```python
 
-```
+## Relevant papers:
+[1] Generative Adversarial Nets (Goodfellow et al, 2014): https://arxiv.org/pdf/1406.2661.pdf
+
+[2] Least Squares Generative Adversarial Networks (Mao et al, 2016): https://arxiv.org/pdf/1611.04076.pdf
+
+[3] Improved Training of Wasserstein GANs (Gulrajani et al, 2017): https://arxiv.org/pdf/1704.00028.pdf
+
+[4] Tutorial on Variational Autoencoders (Doersch, 2016): https://arxiv.org/pdf/1606.05908.pdf
+
+[5] Understanding disentangling in β-VAE (Burgess et al, 2018): https://arxiv.org/pdf/1804.03599.pdf
