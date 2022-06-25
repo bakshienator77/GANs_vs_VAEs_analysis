@@ -1,32 +1,9 @@
-# Assignment 3: Generative Modeling (10% of total class credit)
-
-- [Visual Learning and Recognition (16-824) Spring 2022](https://visual-learning.cs.cmu.edu/index.html)
-- Created By: [Murtaza Dalal](https://mihdalal.github.io/), [Russell Mendonca](https://russellmendonca.github.io/)
-- TAs: [Murtaza Dalal](https://mihdalal.github.io/), [Russell Mendonca](https://russellmendonca.github.io/)
-- Based on Spring 2019 Deep Unsupervised Learning at UC Berkeley, Homework 3 and Homework 4
-- Please post questions, if any, on the piazza for HW3.
-- Total points: 90
-- Due Date: April 4, 2022 at 11:59pm EST.
-- Please start EARLY!
-
-In this assignment you will do two main things:
-
-1. Implement a basic GAN network architecture, the standard GAN [1](https://arxiv.org/pdf/1406.2661.pdf), LSGAN [2](https://arxiv.org/pdf/1611.04076.pdf) and WGAN-GP [3](https://arxiv.org/pdf/1704.00028.pdf)
-2. Implement an auto-encoder, variational auto-encoder (VAE) [4](https://arxiv.org/pdf/1606.05908.pdf) and a beta-VAE [5](https://arxiv.org/pdf/1804.03599.pdf) with linear schedule.
-
-**Submission Requirements**:
-
-* Please submit your report as well as your code.
-* You should also mention any collaborators or other sources used for different parts of the assignment.
-
 ## Software setup
 
 Please use Python 3.8.
 
-Please run `pip install -r requirements.txt` to install the necessary dependencies for this homework.
+Please run `pip install -r requirements.txt` to install the necessary dependencies. Then run:
 
-## Task 0: Setup (0 points)
-Please follow these directions exactly!
 ```
 cd gan/
 mkdir datasets/
@@ -39,103 +16,216 @@ rm -rf datasets/CUB_200_2011_32/Mallard_0130_76836.jpg datasets/CUB_200_2011_32/
 cp cub_clean_custom_na.npz /path/to/python_env/lib/python3.8/site-packages/cleanfid/stats/cub_clean_custom_na.npz
 ```
 
-## Task 1: Generative Adversarial Networks (60 points)
-We will be training our GANs on the CUB 2011 Dataset (http://www.vision.caltech.edu/visipedia/CUB-200-2011.html). This dataset contains 11,708 images of close up shots of different bird species in various environments. Our models will be trained to generate realistic looking samples of these birds. Due to compute considerations for the course, we will be using a downsampled version of the dataset at a 32x32 resolution.
+## Generative Adversarial Networks
 
-### Question 1.1: GAN Network Architecture
-Let's start by setting up our networks for training a Generative Adversarial Network (GAN). As we covered in class, GANs have two networks, a generator and a discriminator. The generator takes in a noise sample z, generally sampled from the standard normal distribution, and maps it to an image. The discriminator takes in images and outputs the probability that the image is real or fake.
-You will need to fill out `networks.py` wherever `#TODO 1.1` is written.
+### Simple GAN loss
 
-### Question 1.2: GAN Training Code
-Now we need to setup the training code for the GAN in `train.py`. Most of the code has been provided but please fill out all of the sections that have `#TODO 1.2`.
-Additionally, implement a function to do latent space interpolation (see utils.py).
+In this section, we test the performance of the original GAN losses for the generator and discriminator as described in Algorithm 1 of [1]((https://arxiv.org/pdf/1406.2661.pdf))
 
-### Question 1.3: Implement GAN loss (20 points)
-In general, we train the generator such that it can fool the discriminator, ie samples from the generator will have high probability under the discriminator. Analogously, we train the discriminator such that it can tell apart real and fake images. This means our loss term encourages the discriminator to assign high probability to real images while assigning low probability to fake images. In this section, we will implement the original GAN losses for the generator and discriminator as described in Algorithm 1 of [1]((https://arxiv.org/pdf/1406.2661.pdf)) in `q1_3.py`.
 
-#### Question 1.3.1: Implement the GAN loss from the GAN paper [1](https://arxiv.org/pdf/1406.2661.pdf)
-#### Question 1.3.2: Run q1_3.py
-#### Question 1.3.3: Analysis
-* What is the final FID attained? Additionally, please plot the fid score with respect to training iterations and report the final score.
-* How do the samples look? Please plot them here.
-* How does the latent space interpolation look, is the latent space disentangled at all?
-* As you may have noticed, the FID jumps around a lot (can range from 100 to 150) and the final samples do not look very good. Please describe in your own words why you think this might be the case.
+**Final FID attained is 146**. However as can be seen from the graph ahead the FID had gone < 60 around iterations 23k - 25k. This indicates some form of overfitting is happening. From the samples below we can see some form of mode collapse happening.
 
-### Question 1.4: Implement LSGAN loss (20 points)
-For this question, please read [2](https://arxiv.org/pdf/1611.04076.pdf) and implement equation (2) as the loss for the generator and discriminator with c=1 in `q1_4.py`.
+![fid_vs_iterations.png](gan/reruns/data_gan_rerun/fid_vs_iterations.png)
 
-#### Question 1.4.1: Implement the GAN loss from the LSGAN paper [2](https://arxiv.org/pdf/1611.04076.pdf)
-#### Question 1.4.2: Run q1_4.py
-#### Question 1.4.3: Analysis
-* What is the final FID attained? Additionally, please plot the fid score with respect to training iterations and report the final score.
-* How do the samples look? Please plot them here.
-* How does the latent space interpolation look, is the latent space disentangled at all?
-* If this section was implemented correctly, you should have a final FID in the ballpark of *90* and the samples should look reasonable at this point (you should see some birds but they might be imperfect). In your own words, describe why you think this version of the GAN loss was more stable than the original.
+### Samples At iteration 30k
 
-### Question 1.5: Implement WGAN-GP loss (20 points)
-For this question, please read the WGAN-GP paper [3](https://arxiv.org/pdf/1704.00028.pdf) and implement the generator and discriminator losses from Algorithm 1 in `q1_5.py`. You may also refer to these slides(https://docs.google.com/presentation/d/1kZJ3RBfD-vnwOZQYlpH4qbTcICUcYhK0UXEQlnl3h4g/edit#slide=id.g4ce74c3fd4_0_185) which cover WGAN and WGAN-GP.
-Additionally, implement the interpolated batch (which is necessary for the loss) in `train.py`.
+![samples_30000.png](gan/data_gan/samples_30000.png)
 
-#### Question 1.5.1: Implement the GAN loss in [3](https://arxiv.org/pdf/1704.00028.pdf)
-#### Question 1.5.2: Run q1_5.py
-#### Question 1.5.3: Analysis
-* What is the final FID attained? Please plot the fid score with respect to training iterations and report the final score.
-* How do the samples look? Please plot them here.
-* How does the latent space interpolation look, is the latent space disentangled at all?
-* If this section was implemented correctly, you should have a final FID in the ballpark of *50* and the samples should look reasonable at this point (you should see some birds that look reasonable). In your own words, describe why you think this version of the GAN loss was so much more stable and performant than the previous two.
 
-### Debugging Tips
-1. Run export PYTORCH_JIT=0 when debugging. This will disable JIT, which will slow down the code but enable you to use pdb to debug. In Jupyter notebooks, you can add the following cell to do the same (make sure to do this at the top of the file): 
-```
-import os
-os.environ["PYTORCH_JIT"] = "0"
-```
-2. GAN losses are pretty much meaningless! If you want to understand if your network is learning, visualize the samples. The FID score should generally be going down as well.
-3. Don't change the hyper-parameters at all, they have been carefully tuned to ensure the networks will train stably, if things aren't working its a bug in your code.
+### Samples At iteration 23k
 
-## Task 2: Variational Autoencoders (30 points)
+![samples_23000.png](gan/data_gan/samples_23000.png)
 
-We will be training AutoEncoders and VAEs on the CIFAR10 dataset.
+As we can see the results at iteration 23k are better than those at 30k, however many of the generated images might look birdlike from a distance but upon zooming in they are unnatural.
 
-### Question 2.1: AutoEncoder (10 points)
-#### Question 2.1.1: Architecture
-In model.py, fill in the TODOs where 2.1.1 is mentioned. This includes the encoder and decoder network architectures, and the forward passes through each. 
+**Below I have plotted it interpolations at iteration 30k and at 23k and it is clear that the interpolations at 23k are better. The colours are more nature oriented as would be seen with birds and there is more variation by varying just the first two dimensions of the laten space. I would say that at 30k there is hardly any disentagling but at 23k there is slightly better disentangling**
 
-#### Question 2.1.2: Loss function
-In train.py, fill in the TODOs where 2.1.2 is mentioned. This includes the loss function for the autoencoder, which is the MSE loss between the input data and the reconstruction. Important - remember to only average across the batch dimension. 
+### Interpolations At iteration 30k
 
-#### Running the auto-encoder
-* Run the command under 2.1  (commands to run can be found at the end of the train.py file). Train the autoencoder for 20 epochs, and try latent sizes 16, 128 and 1024. If your code is correct, the reconstructions should be very clear and sharp. 
-* Plot the reconstruction loss (for the valiation data) versus number of epochs trained on for all three latent size settings on the same plot.
-* Include the reconstruction plots from epoch19 for each latent setting. Which latent size performs best? What are possible reasons for this?
+![interpolations_30000.png](gan/reruns/data_gan_rerun/interpolations_30000.png)
 
-### Question 2.2: Variational Auto-Encoder (10 points)
-#### Question 2.2.1: Architecture
-In model.py. fill in the TODOs where 2.2.1 is mentioned. This only includes the fc layer of the VAEEncoder, and the forward pass through the network.
+<!-- ### At iteration 30k but varying two latent dims from (-3,3) instead of (-1,1)
+![interpolations_14.png](gan/data_gan/interpolations_14.png) -->
 
-#### Question 2.2.2: Loss function 
-Fill in the recon_loss and kl_loss that make up the total loss for the VAE, under the TODO where 2.2.2 is mentioned. Important - remember to only average across the batch dimension. 
+### Interpolations At iteration 23k
 
-#### Running the VAE
-* Run the command under 2.2 (run for 20 epochs). 
-* Plot the reconstruction loss and kl loss (for the valiation data) versus number of
-  epochs (separate plots). Recon loss of reference solution is < 145 at epoch 19 (remember to average only across batch dimension). 
-* Include reconstruction and sample plots from epoch 19. 
+![interpolations_23000.png](gan/reruns/data_gan_rerun/interpolations_23000.png)
 
-### Question 2.3: Beta Variational Auto-Encoder (10 points)
-#### Question 2.3.1: Tuning beta
-The blurriness of the samples can be reduced by tuning the value of beta. 
-* Compare the performance of the models with beta values 0.8, 1, 1.2. (Recon loss at epoch 19 of reference solutions are < 130 for beta0.8, and <155 for beta1.2)
-* Comment on the recon loss, kl loss and quality of samples. (Even with tuning, the samples will still be blurry)
-* For what value of beta does the VAE reduce to an auto-encoder?
+**Discussion** Since the loss function is binary cross entropy, there is a sigmoid function coming into play here due to which the problem of vanishing gradients is a problem. While in this round of training I was lucky enough to witness a duration of stable training, the model eventually did run into vanishing gradients causing the training to worsen, it could've been the generator loss function that ran into the problem (poorer samples) or the discrimator part (poorer checks leading to poorer samples by the generator).
 
-#### Question 2.3.2: Linear schedule for beta
-Another way to improve the quality of samples is to use an annealing scheme for beta. Fill in TODO for 2.3.2. The value of beta should increase linearly from 0 at epoch 0 to target_val at epoch max_epochs.
-* Include plots of samples from epoch 19. Plot the recon loss across epochs (Recon loss at epoch 19 of reference solution is < 125) 
-* How do these compare to those from the vanilla VAE ? 
+##  LSGAN loss
 
-### Debugging Tips
-1. Make sure the autoencoder can produce good quality reconstructions before moving on to the VAE. While the VAE reconstructions might not be clear and the VAE samples even less so, the autoencoder reconstructions should be very clear.
+LSGAN loss is implemented as per equation (2) as the loss for the generator and discriminator with c=1 in [2](https://arxiv.org/pdf/1611.04076.pdf). 
+
+**The final FID attained is  52.57**
+
+![fid_vs_iterations.png](gan/reruns/data_ls_gan_rerun/fid_vs_iterations.png)
+
+The FID is much better than the simple GAN loss. I also verified that my upsample and downsample were inversions of each other through unittesting so I'm confident the implementation was correct.
+
+### Samples At iteration 30k
+
+![samples_30000.png](gan/reruns/data_ls_gan_rerun/samples_30000.png)
+
+These are much better samples than were generated by the previous model at 30k iterations. But there are still some strange samples generated. The ones that do look like birds are more natural looking and believable.
+
+### Samples at iteration 29k
+
+![samples_29000.png](gan/reruns/data_ls_gan_rerun/samples_29000.png)
+
+<!-- **Q**{How does the latent space interpolation look, is the latent space disentangled at all?}
+\A{} -->
+### Interpolations At 30k iterations
+
+![interpolations_30000.png](gan/reruns/data_ls_gan_rerun/interpolations_30000.png)
+
+<!-- ### At iteration 30k but varying two latent dims from (-3,3) instead of (-1,1)
+
+![interpolations_14.png](gan/data_ls_gan/interpolations_14.png) -->
+
+The latent space generated from (-1, 1) (first image) looks a little bird like but doesn't seem all that disentangled, that being said the choice to pick the first two hidden dimensions is arbitrary and unlike some other deterministic dimensionality rediction algorith like PCA it is not guaranteed that the first two dimensions will be the most meaningful.
+
+**Discussion** This version of GAN loss was more stable because it used mse loss without any sigmoid activations leading to better gradients more consistently as the problem of vanishing gradients is avoided.
+
+
+## WGAN-GP loss
+
+Here I use the generator and discriminator losses from Algorithm 1 in WGAN-GP paper [3](https://arxiv.org/pdf/1704.00028.pdf).
+
+**The final FID obtained is 38.6.**
+
+![fid_vs_iterations.png](gan/reruns/data_wgan_gp_rerun/fid_vs_iterations.png)
+
+### Samples At iteration 30k
+
+![samples_30000.png](gan/reruns/data_wgan_gp_rerun/samples_30000.png)
+
+### Interpolations At 30k iterations
+
+![interpolations_30000.png](gan/reruns/data_wgan_gp_rerun/interpolations_30000.png)
+
+### At iteration 30k but varying two latent dims from (-3,3) instead of (-1,1)
+
+![interpolations_14.png](gan/reruns/data_wgan_gp_rerun/interpolations_14.png)
+
+Here we got a little lucky! though the first two latent dimensions are being altered for both attempts, the rest of the randomly generated vector would not have been the same between the above two images, nevertheless the generation is certainly shows a birdlike - batlike variation while keeping the sky constant. This shows that this model is better at latent space disentanglement than the first two.
+
+
+**Discussion** The previous loss function overcame the problem of vanishing gradients by using MSE Loss however there are two issues still unaddressed:
+- Mseloss can still have exploding gradients as gradients are unclipped leading to training instability
+- MSEloss never truly converges as the gradients vanish as they approach prediction approaches the true value (this is not a problem with BCE loss)
+
+Hence in the WGAN-GP loss we bring back the BCE loss as the GAN objective and additionally impose a loss on the norm of the gradient of the loss such that it is close to 1.0. From the graph of a sigmoid it is clear that sigmoid's behaviour can be linear near zero input and this is the region in which it is most beneficial to train a network which has sigmoids in it. Therefore this loss avoid the issue of both vanishing and exploding gradients to have the most stable training we have seen among the three losses.
+
+# Variational Autoencoders
+
+## AutoEncoders
+
+\Q{Plot the reconstruction loss (for the valiation data) versus number of epochs trained on for all three latent size settings on the same plot.}
+
+![loss_curve_final.png](attachment:loss_curve_final.png)
+
+\Q{Include the reconstruction plots from epoch 19 for each latent setting. Which latent size performs best? What are possible reasons for this?}
+
+### Latent Dim 16
+![epoch_19_recons.png](attachment:epoch_19_recons.png)
+
+### Latent Dim 128
+
+![epoch_19_recons.png](attachment:epoch_19_recons.png)
+
+### Latent Dim 1024
+
+![epoch_19_recons.png](attachment:epoch_19_recons.png)
+
+#### The latent size 1024 performs the best primarily because the details in the image are subjected to lesser compression. Similar to when we reduce file sizes of images the first things we lose are high frequency details, the smaller the latent dimension size the more the model has to prioritize maintaining low frequency information like the general shape of the an airplane but not the exact texture on the body.
+
+## Question 2.2: Variational Auto-Encoder
+
+\Q{Plot the reconstruction loss and kl loss (for the valiation data) versus number of epochs (separate plots). Recon loss of reference solution is $<$ 145 at epoch 19 (remember to average only across batch dimension).}
+![loss_curve.png](attachment:loss_curve.png)
+
+![loss_curve_kl.png](attachment:loss_curve_kl.png)
+
+\Q{Include reconstruction and sample plots from epoch 19.}
+
+![epoch_19_samples.png](attachment:epoch_19_samples.png)
+
+![epoch_19_recons.png](attachment:epoch_19_recons.png)
+
+## Question 2.3: Beta Variational Auto-Encoder
+
+### Question 2.3.1: Tuning beta
+
+**Q**{Compare the performance of the models with beta values 0.8, 1, 1.2. (Recon loss at epoch 19 of reference solutions are $<$ 130 for beta 0.8, and $<$ 155 for beta1.2)}
+
+### Recon Loss 
+ Beta = 0.8 | Beta = 1.0 | Beta = 1.2
+---|---|---|
+![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/loss_curve.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/loss_curve.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/loss_curve.png)
+
+![loss_curve_vae_final.png](attachment:loss_curve_vae_final.png)
+
+### KL Loss 
+ Beta = 0.8 | Beta = 1.0 | Beta = 1.2
+ ---|---|---|
+ ![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/loss_curve_kl.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/loss_curve_kl.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/loss_curve_kl.png)
+
+![loss_curve_vae_final_kl.png](attachment:loss_curve_vae_final_kl.png)
+
+### Samples 
+ Beta = 0.8 | Beta = 1.0 | Beta = 1.2
+ ---|---|---|
+![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/epoch_19_samples.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/epoch_19_samples.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/epoch_19_samples.png)
+
+### Reconstructions
+ Beta = 0.8 | Beta = 1.0 | Beta = 1.2
+ ---|---|---|
+ ![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/epoch_19_recons.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/epoch_19_recons.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/epoch_19_recons.png)
+
+### Beta = 0.8
+
+![epoch_19_samples.png](attachment:epoch_19_samples.png)
+
+![epoch_19_recons.png](attachment:epoch_19_recons.png)
+
+### Beta = 1.0
+
+![epoch_19_samples.png](attachment:epoch_19_samples.png)
+
+![epoch_19_recons.png](attachment:epoch_19_recons.png)
+
+### Beta = 1.2
+
+![epoch_19_samples.png](attachment:epoch_19_samples.png)
+
+![epoch_19_recons.png](attachment:epoch_19_recons.png)
+
+**Q**{Comment on the recon loss, kl loss and quality of samples. (Even with tuning, the samples will still be blurry)}
+
+
+**A** The recon loss of beta=0.8 is the best while the KL loss of beta = 1.2 is the best. This makes sense as the beta parameter controls the weight of the KL loss in the final loss term. With regards to the quality of samples all three yield pretty blurry results, that being said taking beta 0.8 gives more intricate reconstructions with better details while beta 1.2 gives results that overall respect the distribution of examples better but you really have to squint hard and tilt your head to make out any of the CIFAR 10 classes from them.
+
+**Q**{For what value of beta does the VAE reduce to an auto-encoder?}
+**A Beta = 0.0
+
+
+### Question 2.3.2: Linear schedule for beta
+
+\Q{Include plots of samples from epoch 19. Plot the recon loss across epochs (Recon loss at epoch 19 of reference solution is $<$ 125)}
+
+![epoch_19_samples.png](attachment:epoch_19_samples.png)
+
+![loss_curve.png](attachment:loss_curve.png)
+
+![loss_curve_kl.png](attachment:loss_curve_kl.png)
+
+**Q**{How do these compare to those from the vanilla VAE ?}
+
+**A** Both the quality of the reconstructions and the actual reocnstruction loss value are much better than the vanilla VAE. There are more details and better high frequency information despite incorporating another loss (KL loss) which could've lead to a compromising on reconstruction quality.
+
+
+
 
 
 ## Relevant papers:
@@ -148,15 +238,3 @@ Another way to improve the quality of samples is to use an annealing scheme for 
 [4] Tutorial on Variational Autoencoders (Doersch, 2016): https://arxiv.org/pdf/1606.05908.pdf
 
 [5] Understanding disentangling in β-VAE (Burgess et al, 2018): https://arxiv.org/pdf/1804.03599.pdf
-
-## Submission Checklist
-### Report
-
-Specification of collaborators and other sources.
-
-All visualizations and plots as well as your responses to the questions, ordered by question number.
-Please make a separate pdf report in which you include your results. Put each sub-question, ie. 1.3, 1.4, 1.5 on a separate page.
-
-### Files
-Your code in the `gan/` and `vae/` folders.
-
