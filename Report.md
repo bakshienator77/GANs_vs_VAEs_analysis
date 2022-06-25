@@ -37,6 +37,8 @@ As we can see the results at iteration 23k are better than those at 30k, however
 
 ##  LSGAN loss
 
+LSGAN loss is implemented as per equation (2) as the loss for the generator and discriminator with c=1 in [2](https://arxiv.org/pdf/1611.04076.pdf). 
+
 **The final FID attained is  52.57**
 
 ![fid_vs_iterations.png](gan/reruns/data_ls_gan_rerun/fid_vs_iterations.png)
