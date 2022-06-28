@@ -29,12 +29,12 @@ In this section, we test the performance of the original GAN losses for the gene
 
 ### Samples At iteration 30k
 
-![samples_30000.png](gan/data_gan/samples_30000.png)
+![samples_30000.png](gan/reruns/data_gan_rerun/samples_30000.png)
 
 
 ### Samples At iteration 23k
 
-![samples_23000.png](gan/data_gan/samples_23000.png)
+![samples_23000.png](gan/reruns/data_gan_rerun/samples_23000.png)
 
 As we can see the results at iteration 23k are better than those at 30k, however many of the generated images might look birdlike from a distance but upon zooming in they are unnatural.
 
@@ -121,31 +121,29 @@ Hence in the WGAN-GP loss we bring back the BCE loss as the GAN objective and ad
 
 ## AutoEncoders
 
-\Q{Plot the reconstruction loss (for the valiation data) versus number of epochs trained on for all three latent size settings on the same plot.}
+![loss_curve_final.png](vae/loss_curve_final.png)
 
-![loss_curve_final.png](attachment:loss_curve_final.png)
-
-\Q{Include the reconstruction plots from epoch 19 for each latent setting. Which latent size performs best? What are possible reasons for this?}
 
 ### Latent Dim 16
-![epoch_19_recons.png](attachment:epoch_19_recons.png)
+Reconstruction quality at epoch 19 of training
+![epoch_19_recons.png](vae/data/ae_latent16/epoch_19_recons.png)
 
 ### Latent Dim 128
-
-![epoch_19_recons.png](attachment:epoch_19_recons.png)
+Reconstruction quality at epoch 19 of training
+![epoch_19_recons.png](vae/data/ae_latent128/epoch_19_recons.png)
 
 ### Latent Dim 1024
-
-![epoch_19_recons.png](attachment:epoch_19_recons.png)
+Reconstruction quality at epoch 19 of training
+![epoch_19_recons.png](vae/data/ae_latent1024/epoch_19_recons.png)
 
 #### The latent size 1024 performs the best primarily because the details in the image are subjected to lesser compression. Similar to when we reduce file sizes of images the first things we lose are high frequency details, the smaller the latent dimension size the more the model has to prioritize maintaining low frequency information like the general shape of the an airplane but not the exact texture on the body.
 
-## Question 2.2: Variational Auto-Encoder
+## Variational Auto-Encoders
 
 \Q{Plot the reconstruction loss and kl loss (for the valiation data) versus number of epochs (separate plots). Recon loss of reference solution is $<$ 145 at epoch 19 (remember to average only across batch dimension).}
-![loss_curve.png](attachment:loss_curve.png)
+![loss_curve.png](vae/data/vae_latent1024/loss_curve.png)
 
-![loss_curve_kl.png](attachment:loss_curve_kl.png)
+![loss_curve_kl.png](vae/data/vae_latent1024/loss_curve_kl.png)
 
 \Q{Include reconstruction and sample plots from epoch 19.}
 
