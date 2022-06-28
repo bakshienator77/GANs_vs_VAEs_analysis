@@ -147,9 +147,9 @@ Reconstruction quality at epoch 19 of training
 
 \Q{Include reconstruction and sample plots from epoch 19.}
 
-![epoch_19_samples.png](attachment:epoch_19_samples.png)
+![epoch_19_samples.png](vae/data/vae_latent1024/epoch_19_samples.png)
 
-![epoch_19_recons.png](attachment:epoch_19_recons.png)
+![epoch_19_recons.png](vae/data/vae_latent1024/epoch_19_recons.png)
 
 ## Question 2.3: Beta Variational Auto-Encoder
 
