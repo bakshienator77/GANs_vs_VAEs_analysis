@@ -238,3 +238,6 @@ Hence in the WGAN-GP loss we bring back the BCE loss as the GAN objective and ad
 [4] Tutorial on Variational Autoencoders (Doersch, 2016): https://arxiv.org/pdf/1606.05908.pdf
 
 [5] Understanding disentangling in β-VAE (Burgess et al, 2018): https://arxiv.org/pdf/1804.03599.pdf
+
+
+*This work was done toward completion of Visual Learning and Recognition (16-824) at CMU Robotics Institute*
