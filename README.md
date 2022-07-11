@@ -1,6 +1,6 @@
 ## Software setup
 
-Please use Python 3.8.
+Use Python 3.8.
 
 Please run `pip install -r requirements.txt` to install the necessary dependencies. Then run:
 
