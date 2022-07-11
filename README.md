@@ -206,7 +206,7 @@ Reconstruction quality at epoch 19 of training
 **Note:** For Beta = 0.0 the VAE reduces to an auto-encoder.
 
 
-###Linear schedule for beta
+### Linear schedule for beta
 
 <!-- \Q{Include plots of samples from epoch 19. Plot the recon loss across epochs (Recon loss at epoch 19 of reference solution is $<$ 125)} -->
 
