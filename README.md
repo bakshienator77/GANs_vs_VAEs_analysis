@@ -154,21 +154,21 @@ Reconstruction quality at epoch 19 of training
 
 ### Tuning beta
 
-**Q**{Compare the performance of the models with beta values 0.8, 1, 1.2. (Recon loss at epoch 19 of reference solutions are $<$ 130 for beta 0.8, and $<$ 155 for beta1.2)}
+**Comparin the performance of the models with beta values 0.8, 1, 1.2**
 
 ### Recon Loss 
  Beta = 0.8 | Beta = 1.0 | Beta = 1.2
 ---|---|---|
 ![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/loss_curve.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/loss_curve.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/loss_curve.png)
 
-![loss_curve_vae_final.png](attachment:loss_curve_vae_final.png)
+![loss_curve_vae_final.png](vae/loss_curve_vae_final.png)
 
 ### KL Loss 
  Beta = 0.8 | Beta = 1.0 | Beta = 1.2
  ---|---|---|
  ![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/loss_curve_kl.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/loss_curve_kl.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/loss_curve_kl.png)
 
-![loss_curve_vae_final_kl.png](attachment:loss_curve_vae_final_kl.png)
+![loss_curve_vae_final_kl.png](vae/loss_curve_vae_final_kl.png)
 
 ### Samples 
  Beta = 0.8 | Beta = 1.0 | Beta = 1.2
@@ -180,7 +180,7 @@ Reconstruction quality at epoch 19 of training
  ---|---|---|
  ![loss_curve.png](./vae/data/vae_latent1024_beta_constant0.8/epoch_19_recons.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.0/epoch_19_recons.png) | ![loss_curve.png](./vae/data/vae_latent1024_beta_constant1.2/epoch_19_recons.png)
 
-### Beta = 0.8
+<!-- ### Beta = 0.8
 
 ![epoch_19_samples.png](attachment:epoch_19_samples.png)
 
@@ -196,30 +196,29 @@ Reconstruction quality at epoch 19 of training
 
 ![epoch_19_samples.png](attachment:epoch_19_samples.png)
 
-![epoch_19_recons.png](attachment:epoch_19_recons.png)
+![epoch_19_recons.png](attachment:epoch_19_recons.png) -->
 
-**Q**{Comment on the recon loss, kl loss and quality of samples. (Even with tuning, the samples will still be blurry)}
-
-
-**A** The recon loss of beta=0.8 is the best while the KL loss of beta = 1.2 is the best. This makes sense as the beta parameter controls the weight of the KL loss in the final loss term. With regards to the quality of samples all three yield pretty blurry results, that being said taking beta 0.8 gives more intricate reconstructions with better details while beta 1.2 gives results that overall respect the distribution of examples better but you really have to squint hard and tilt your head to make out any of the CIFAR 10 classes from them.
-
-**Q**{For what value of beta does the VAE reduce to an auto-encoder?}
-**A Beta = 0.0
+<!-- **Q**{Comment on the recon loss, kl loss and quality of samples. (Even with tuning, the samples will still be blurry)} -->
 
 
-### Question 2.3.2: Linear schedule for beta
+**Discussion:** The recon loss of beta=0.8 is the best while the KL loss of beta = 1.2 is the best. This makes sense as the beta parameter controls the weight of the KL loss in the final loss term. With regards to the quality of samples all three yield pretty blurry results, that being said taking beta 0.8 gives more intricate reconstructions with better details while beta 1.2 gives results that overall respect the distribution of examples better but you really have to squint hard and tilt your head to make out any of the CIFAR 10 classes from them.
 
-\Q{Include plots of samples from epoch 19. Plot the recon loss across epochs (Recon loss at epoch 19 of reference solution is $<$ 125)}
+**Note:** For Beta = 0.0 the VAE reduces to an auto-encoder.
 
-![epoch_19_samples.png](attachment:epoch_19_samples.png)
 
-![loss_curve.png](attachment:loss_curve.png)
+###Linear schedule for beta
 
-![loss_curve_kl.png](attachment:loss_curve_kl.png)
+<!-- \Q{Include plots of samples from epoch 19. Plot the recon loss across epochs (Recon loss at epoch 19 of reference solution is $<$ 125)} -->
 
-**Q**{How do these compare to those from the vanilla VAE ?}
+![epoch_19_samples.png](vae/data/vae_latent1024_beta_linear1/epoch_19_samples.png)
 
-**A** Both the quality of the reconstructions and the actual reocnstruction loss value are much better than the vanilla VAE. There are more details and better high frequency information despite incorporating another loss (KL loss) which could've lead to a compromising on reconstruction quality.
+![loss_curve.png](vae/data/vae_latent1024_beta_linear1/loss_curve.png)
+
+![loss_curve_kl.png](vae/data/vae_latent1024_beta_linear1/loss_curve_kl.png)
+
+<!-- **Q**{How do these compare to those from the vanilla VAE ?} -->
+
+**Discussion (comparison with vanilla VAE)** Both the quality of the reconstructions and the actual reocnstruction loss value are much better than the vanilla VAE. There are more details and better high frequency information despite incorporating another loss (KL loss) which could've lead to a compromising on reconstruction quality.
 
 
 
