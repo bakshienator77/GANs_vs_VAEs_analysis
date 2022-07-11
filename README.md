@@ -151,7 +151,7 @@ Reconstruction quality at epoch 19 of training
 
 ![epoch_19_recons.png](vae/data/vae_latent1024/epoch_19_recons.png)
 
-## Question 2.3: Beta Variational Auto-Encoder
+## Beta Variational Auto-Encoder
 
 ### Question 2.3.1: Tuning beta
 
